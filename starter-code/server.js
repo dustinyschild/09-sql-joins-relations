@@ -6,7 +6,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3000;
 const app = express();
-const conString = 'postgres://postgres:1234@localhost:5432/kilovolt';// TODO: Don't forget to set your own conString
+const conString = 'postgres://postgres:1234@localhost:5432/kilovolt';// TO/DO: Don't forget to set your own conString
 const client = new pg.Client(conString);
 client.connect();
 client.on('error', function(error) {
@@ -24,9 +24,14 @@ app.get('/new', function(request, response) {
 app.get('/articles', function(request, response) {
   // REVIEW: This query will join the data together from our tables and send it back to the client.
   // TODO: Write a SQL query which joins all data from articles and authors tables on the author_id value of each
-  client.query(``)
+  client.query(`
+    SELECT *
+    FROM articles
+    FULL OUTER JOIN authors
+    ON articles.author_id = authors.author_id`)
   .then(function(result) {
     response.send(result.rows);
+    console.log('tables joined');
   })
   .catch(function(err) {
     console.error(err)
