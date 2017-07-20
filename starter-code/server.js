@@ -23,7 +23,7 @@ app.get('/new', function(request, response) {
 
 app.get('/articles', function(request, response) {
   // REVIEW: This query will join the data together from our tables and send it back to the client.
-  // TODO: Write a SQL query which joins all data from articles and authors tables on the author_id value of each
+  // TO/DO: Write a SQL query which joins all data from articles and authors tables on the author_id value of each
   client.query(`
     SELECT *
     FROM articles
@@ -39,9 +39,13 @@ app.get('/articles', function(request, response) {
 });
 
 app.post('/articles', function(request, response) {
+  console.log('posting');
   client.query(
-    '', // TODO: Write a SQL query to insert a new author, ON CONFLICT DO NOTHING
-    [], // TODO: Add the author and "authorUrl" as data for the SQL query
+    'INSERT INTO authors(author, "authorUrl") VALUES($1, $2) ON CONFLICT DO NOTHING', // TO/DO: Write a SQL query to insert a new author, ON CONFLICT DO NOTHING
+    [
+      request.body.author,
+      request.body.authorUrl
+    ], // TO/DO: Add the author and "authorUrl" as data for the SQL query
     function(err) {
       if (err) console.error(err)
       queryTwo() // This is our second query, to be executed when this first query is complete.
@@ -50,8 +54,8 @@ app.post('/articles', function(request, response) {
 
   function queryTwo() {
     client.query(
-      ``, // TODO: Write a SQL query to retrieve the author_id from the authors table for the new article
-      [], // TODO: Add the author name as data for the SQL query
+      `SELECT author_id FROM authors WHERE author = $1;`, // TO/DO: Write a SQL query to retrieve the author_id from the authors table for the new article
+      [request.body.author], // TODO: Add the author name as data for the SQL query
       function(err, result) {
         if (err) console.error(err)
         queryThree(result.rows[0].author_id) // This is our third query, to be executed when the second is complete. We are also passing the author_id into our third query
