@@ -6,7 +6,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3000;
 const app = express();
-const conString = 'postgres://postgres:1234@localhost:5432/kilovolt';// TO/DO: Don't forget to set your own conString
+const conString = 'postgres://postgres:meep@localhost:5432/kilovolt';// TO/DO: Don't forget to set your own conString
 const client = new pg.Client(conString);
 client.connect();
 client.on('error', function(error) {
@@ -65,12 +65,10 @@ app.post('/articles', function(request, response) {
 
   function queryThree(author_id) {
     client.query(
-      `INSERT INTO articles(author_id, title, author, "authorUrl", category, publishedOn, body) VALUES($1, $2, $3, $4, $5, $6, $7)`, // TODO: Write a SQL query to insert the new article using the author_id from our previous query
+      `INSERT INTO articles(author_id, title, category, "publishedOn", body) VALUES($1, $2, $3, $4, $5)`, // TODO: Write a SQL query to insert the new article using the author_id from our previous query
       [
         author_id,
         request.body.title,
-        request.body.author,
-        request.body.authorUrl,
         request.body.category,
         request.body.publishedOn,
         request.body.body
